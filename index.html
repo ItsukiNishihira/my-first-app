@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>スタイリッシュ企画書メーカー</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts（Phase 3: フォント選択用） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <!-- PDF出力用ライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- グラフ描画用ライブラリ（Phase 3） -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 </head>
 <body>
     <!-- ヘッダー -->
@@ -136,6 +142,111 @@
                     </div>
                 </div>
                 <button class="reset-color-btn" id="reset-color-btn">デフォルトに戻す</button>
+            </div>
+
+            <!-- フォント選択（Phase 3新機能） -->
+            <div class="font-selector">
+                <h3>✒️ フォント選択</h3>
+                <select id="font-selector" class="font-select">
+                    <option value="default">デフォルト（Segoe UI）</option>
+                    <option value="noto-sans">Noto Sans JP（ゴシック）</option>
+                    <option value="noto-serif">Noto Serif JP（明朝）</option>
+                    <option value="mplus-rounded">M PLUS Rounded（丸ゴシック）</option>
+                    <option value="zen-maru">Zen Maru Gothic（柔らか）</option>
+                    <option value="poppins">Poppins（英字向け）</option>
+                </select>
+            </div>
+
+            <!-- セクション管理（Phase 3新機能） -->
+            <div class="section-manager">
+                <h3>📋 セクション管理</h3>
+                <div class="section-controls">
+                    <button class="control-btn add-section-btn" id="add-section-btn">
+                        ➕ セクション追加
+                    </button>
+                    <button class="control-btn remove-section-btn" id="remove-section-btn">
+                        ➖ 最後のセクション削除
+                    </button>
+                </div>
+            </div>
+
+            <!-- グラフ・イラスト挿入（Phase 3新機能） -->
+            <div class="insert-elements">
+                <h3>📊 要素を挿入</h3>
+                <div class="insert-controls">
+                    <button class="control-btn insert-chart-btn" id="insert-chart-btn">
+                        📊 グラフを挿入
+                    </button>
+                    <button class="control-btn insert-illustration-btn" id="insert-illustration-btn">
+                        🎨 イラストを挿入
+                    </button>
+                </div>
+            </div>
+
+            <!-- グラフ設定モーダル -->
+            <div id="chart-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal" id="close-chart-modal">&times;</span>
+                    <h3>📊 グラフを作成</h3>
+                    <div class="chart-form">
+                        <div class="form-group">
+                            <label>グラフの種類</label>
+                            <select id="chart-type">
+                                <option value="bar">棒グラフ</option>
+                                <option value="line">折れ線グラフ</option>
+                                <option value="pie">円グラフ</option>
+                                <option value="doughnut">ドーナツグラフ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>グラフタイトル</label>
+                            <input type="text" id="chart-title" placeholder="例：売上推移">
+                        </div>
+                        <div class="form-group">
+                            <label>データラベル（カンマ区切り）</label>
+                            <input type="text" id="chart-labels" placeholder="例：4月,5月,6月,7月">
+                        </div>
+                        <div class="form-group">
+                            <label>データ値（カンマ区切り）</label>
+                            <input type="text" id="chart-data" placeholder="例：120,150,180,200">
+                        </div>
+                        <button class="modal-btn" id="create-chart-btn">グラフを作成</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- イラスト選択モーダル -->
+            <div id="illustration-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal" id="close-illustration-modal">&times;</span>
+                    <h3>🎨 イラストを選択</h3>
+                    <div class="illustration-grid">
+                        <div class="illustration-item" data-type="success">
+                            <div class="illustration-preview success-icon">✓</div>
+                            <p>成功</p>
+                        </div>
+                        <div class="illustration-item" data-type="growth">
+                            <div class="illustration-preview growth-icon">📈</div>
+                            <p>成長</p>
+                        </div>
+                        <div class="illustration-item" data-type="target">
+                            <div class="illustration-preview target-icon">🎯</div>
+                            <p>目標</p>
+                        </div>
+                        <div class="illustration-item" data-type="idea">
+                            <div class="illustration-preview idea-icon">💡</div>
+                            <p>アイデア</p>
+                        </div>
+                        <div class="illustration-item" data-type="team">
+                            <div class="illustration-preview team-icon">👥</div>
+                            <p>チーム</p>
+                        </div>
+                        <div class="illustration-item" data-type="rocket">
+                            <div class="illustration-preview rocket-icon">🚀</div>
+                            <p>スタート</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- アクションボタン（Phase 2新機能） -->

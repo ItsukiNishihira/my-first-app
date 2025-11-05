@@ -604,3 +604,375 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ========================================
+   Phase 3: フォント選択
+   ======================================== */
+.font-selector {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.font-selector h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.font-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.font-select:hover {
+    border-color: #667eea;
+}
+
+.font-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* フォントファミリーのクラス */
+.font-default {
+    font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', sans-serif;
+}
+
+.font-noto-sans {
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.font-noto-serif {
+    font-family: 'Noto Serif JP', serif;
+}
+
+.font-mplus-rounded {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+
+.font-zen-maru {
+    font-family: 'Zen Maru Gothic', sans-serif;
+}
+
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ========================================
+   Phase 3: セクション管理
+   ======================================== */
+.section-manager {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.section-manager h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.section-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.control-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    background: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #555;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.add-section-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.remove-section-btn:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+/* ========================================
+   Phase 3: グラフ・イラスト挿入
+   ======================================== */
+.insert-elements {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.insert-elements h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.insert-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.insert-chart-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.insert-illustration-btn:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+/* グラフコンテナ */
+.chart-container {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #333;
+}
+
+.remove-chart-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 59, 48, 0.9);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.remove-chart-btn:hover {
+    background: rgba(255, 59, 48, 1);
+}
+
+/* イラストコンテナ */
+.illustration-container {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.illustration-svg {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.remove-illustration-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 59, 48, 0.9);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.remove-illustration-btn:hover {
+    background: rgba(255, 59, 48, 1);
+}
+
+/* ========================================
+   Phase 3: モーダル
+   ======================================== */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: #000;
+}
+
+.modal-content h3 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* グラフフォーム */
+.chart-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.chart-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.chart-form input,
+.chart-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.chart-form input:focus,
+.chart-form select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* イラストグリッド */
+.illustration-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.illustration-item {
+    padding: 1.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.illustration-item:hover {
+    border-color: #667eea;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.illustration-preview {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.illustration-item p {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 600;
+}
+
+/* ========================================
+   Phase 3: レスポンシブ調整
+   ======================================== */
+@media (max-width: 768px) {
+    .section-controls,
+    .insert-controls {
+        flex-direction: column;
+    }
+
+    .illustration-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+}

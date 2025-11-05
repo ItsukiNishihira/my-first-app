@@ -34,6 +34,18 @@ function initializeApp() {
 
     // Phase 2: 保存されたデータを読み込む
     loadSavedData();
+
+    // Phase 3: フォント選択機能をセットアップ
+    setupFontSelector();
+
+    // Phase 3: セクション管理機能をセットアップ
+    setupSectionManager();
+
+    // Phase 3: グラフ挿入機能をセットアップ
+    setupChartInsertion();
+
+    // Phase 3: イラスト挿入機能をセットアップ
+    setupIllustrationInsertion();
 }
 
 // ========================================
@@ -649,3 +661,404 @@ function exportToPDF() {
         }, 3000);
     });
 }
+
+// ========================================
+// Phase 3: フォント選択機能
+// ========================================
+function setupFontSelector() {
+    const fontSelector = document.getElementById('font-selector');
+    const proposalPreview = document.getElementById('proposal-preview');
+
+    fontSelector.addEventListener('change', function() {
+        const selectedFont = this.value;
+
+        // 既存のフォントクラスを削除
+        proposalPreview.classList.remove(
+            'font-default',
+            'font-noto-sans',
+            'font-noto-serif',
+            'font-mplus-rounded',
+            'font-zen-maru',
+            'font-poppins'
+        );
+
+        // 新しいフォントクラスを追加
+        if (selectedFont !== 'default') {
+            proposalPreview.classList.add('font-' + selectedFont);
+        }
+
+        console.log('フォントを変更しました:', selectedFont);
+    });
+
+    console.log('フォント選択機能を有効化しました');
+}
+
+// ========================================
+// Phase 3: セクション管理機能
+// ========================================
+
+// セクション番号のカウンター
+let sectionCounter = 6; // 既存の5セクション + 予算
+
+function setupSectionManager() {
+    const addSectionBtn = document.getElementById('add-section-btn');
+    const removeSectionBtn = document.getElementById('remove-section-btn');
+
+    // セクション追加ボタン
+    addSectionBtn.addEventListener('click', function() {
+        addNewSection();
+    });
+
+    // セクション削除ボタン
+    removeSectionBtn.addEventListener('click', function() {
+        removeLastSection();
+    });
+
+    console.log('セクション管理機能を有効化しました');
+}
+
+// 新しいセクションを追加
+function addNewSection() {
+    const proposalPreview = document.getElementById('proposal-preview');
+    sectionCounter++;
+
+    // 新しいセクションを作成
+    const newSection = document.createElement('div');
+    newSection.className = 'doc-section';
+    newSection.setAttribute('data-section-id', sectionCounter);
+    newSection.innerHTML = `
+        <h2 class="section-title">📝 セクション ${sectionCounter}</h2>
+        <p class="section-content" contenteditable="true">ここに内容を入力してください（直接編集可能）</p>
+    `;
+
+    // プレビューエリアに追加
+    proposalPreview.appendChild(newSection);
+
+    // アニメーション
+    newSection.style.animation = 'fadeIn 0.5s ease';
+
+    console.log('セクションを追加しました:', sectionCounter);
+}
+
+// 最後のセクションを削除
+function removeLastSection() {
+    const proposalPreview = document.getElementById('proposal-preview');
+    const sections = proposalPreview.querySelectorAll('.doc-section');
+
+    // 最低5つのセクションは残す
+    if (sections.length > 5) {
+        const lastSection = sections[sections.length - 1];
+        lastSection.style.animation = 'fadeOut 0.3s ease';
+
+        setTimeout(function() {
+            proposalPreview.removeChild(lastSection);
+            console.log('セクションを削除しました');
+        }, 300);
+    } else {
+        alert('これ以上セクションを削除できません（最低5つ必要）');
+    }
+}
+
+// fadeOutアニメーション
+const fadeOutStyle = document.createElement('style');
+fadeOutStyle.textContent = `
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+    }
+`;
+document.head.appendChild(fadeOutStyle);
+
+// ========================================
+// Phase 3: グラフ挿入機能
+// ========================================
+
+let chartCounter = 0; // グラフのカウンター
+
+function setupChartInsertion() {
+    const insertChartBtn = document.getElementById('insert-chart-btn');
+    const chartModal = document.getElementById('chart-modal');
+    const closeChartModal = document.getElementById('close-chart-modal');
+    const createChartBtn = document.getElementById('create-chart-btn');
+
+    // グラフ挿入ボタン
+    insertChartBtn.addEventListener('click', function() {
+        chartModal.style.display = 'block';
+    });
+
+    // モーダルを閉じる
+    closeChartModal.addEventListener('click', function() {
+        chartModal.style.display = 'none';
+    });
+
+    // モーダル外クリックで閉じる
+    window.addEventListener('click', function(event) {
+        if (event.target === chartModal) {
+            chartModal.style.display = 'none';
+        }
+    });
+
+    // グラフ作成ボタン
+    createChartBtn.addEventListener('click', function() {
+        createChart();
+        chartModal.style.display = 'none';
+    });
+
+    console.log('グラフ挿入機能を有効化しました');
+}
+
+// グラフを作成
+function createChart() {
+    const chartType = document.getElementById('chart-type').value;
+    const chartTitle = document.getElementById('chart-title').value || 'グラフ';
+    const labelsInput = document.getElementById('chart-labels').value;
+    const dataInput = document.getElementById('chart-data').value;
+
+    // データ検証
+    if (!labelsInput || !dataInput) {
+        alert('ラベルとデータを入力してください');
+        return;
+    }
+
+    // データ解析
+    const labels = labelsInput.split(',').map(function(item) { return item.trim(); });
+    const data = dataInput.split(',').map(function(item) { return parseFloat(item.trim()); });
+
+    if (labels.length !== data.length) {
+        alert('ラベルとデータの数が一致しません');
+        return;
+    }
+
+    chartCounter++;
+
+    // グラフコンテナを作成
+    const chartContainer = document.createElement('div');
+    chartContainer.className = 'chart-container';
+    chartContainer.setAttribute('data-chart-id', chartCounter);
+    chartContainer.innerHTML = `
+        <button class="remove-chart-btn" onclick="removeChart(${chartCounter})">✕</button>
+        <h3 class="chart-title">${chartTitle}</h3>
+        <canvas id="chart-${chartCounter}"></canvas>
+    `;
+
+    // プレビューエリアに追加
+    const proposalPreview = document.getElementById('proposal-preview');
+    proposalPreview.appendChild(chartContainer);
+
+    // Chart.jsでグラフを描画
+    const ctx = document.getElementById('chart-' + chartCounter).getContext('2d');
+
+    // カラーパレット
+    const colors = [
+        'rgba(102, 126, 234, 0.8)',
+        'rgba(255, 107, 107, 0.8)',
+        'rgba(52, 211, 153, 0.8)',
+        'rgba(254, 202, 87, 0.8)',
+        'rgba(251, 146, 60, 0.8)'
+    ];
+
+    new Chart(ctx, {
+        type: chartType,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: chartTitle,
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors.map(function(color) {
+                    return color.replace('0.8', '1');
+                }),
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: chartType === 'pie' || chartType === 'doughnut'
+                }
+            }
+        }
+    });
+
+    // 入力フィールドをクリア
+    document.getElementById('chart-title').value = '';
+    document.getElementById('chart-labels').value = '';
+    document.getElementById('chart-data').value = '';
+
+    console.log('グラフを作成しました:', chartCounter);
+}
+
+// グラフを削除
+function removeChart(chartId) {
+    const chartContainer = document.querySelector('[data-chart-id="' + chartId + '"]');
+    if (chartContainer) {
+        chartContainer.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(function() {
+            chartContainer.remove();
+            console.log('グラフを削除しました:', chartId);
+        }, 300);
+    }
+}
+
+// グローバルスコープに関数を追加（HTML内のonclickから呼べるように）
+window.removeChart = removeChart;
+
+// ========================================
+// Phase 3: イラスト挿入機能
+// ========================================
+
+let illustrationCounter = 0; // イラストのカウンター
+
+function setupIllustrationInsertion() {
+    const insertIllustrationBtn = document.getElementById('insert-illustration-btn');
+    const illustrationModal = document.getElementById('illustration-modal');
+    const closeIllustrationModal = document.getElementById('close-illustration-modal');
+    const illustrationItems = document.querySelectorAll('.illustration-item');
+
+    // イラスト挿入ボタン
+    insertIllustrationBtn.addEventListener('click', function() {
+        illustrationModal.style.display = 'block';
+    });
+
+    // モーダルを閉じる
+    closeIllustrationModal.addEventListener('click', function() {
+        illustrationModal.style.display = 'none';
+    });
+
+    // モーダル外クリックで閉じる
+    window.addEventListener('click', function(event) {
+        if (event.target === illustrationModal) {
+            illustrationModal.style.display = 'none';
+        }
+    });
+
+    // イラストアイテムクリック
+    illustrationItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+            const illustrationType = this.getAttribute('data-type');
+            insertIllustration(illustrationType);
+            illustrationModal.style.display = 'none';
+        });
+    });
+
+    console.log('イラスト挿入機能を有効化しました');
+}
+
+// イラストを挿入
+function insertIllustration(type) {
+    illustrationCounter++;
+
+    // SVGイラストを生成
+    const svg = generateIllustrationSVG(type);
+
+    // イラストコンテナを作成
+    const illustrationContainer = document.createElement('div');
+    illustrationContainer.className = 'illustration-container';
+    illustrationContainer.setAttribute('data-illustration-id', illustrationCounter);
+    illustrationContainer.innerHTML = `
+        <button class="remove-illustration-btn" onclick="removeIllustration(${illustrationCounter})">✕</button>
+        ${svg}
+    `;
+
+    // プレビューエリアに追加
+    const proposalPreview = document.getElementById('proposal-preview');
+    proposalPreview.appendChild(illustrationContainer);
+
+    console.log('イラストを挿入しました:', type);
+}
+
+// SVGイラストを生成
+function generateIllustrationSVG(type) {
+    const svgs = {
+        success: `
+            <svg class="illustration-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="80" fill="#34d399" opacity="0.2"/>
+                <circle cx="100" cy="100" r="60" fill="#34d399" opacity="0.4"/>
+                <path d="M 70 100 L 90 120 L 130 80" stroke="#059669" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `,
+        growth: `
+            <svg class="illustration-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <line x1="40" y1="160" x2="160" y2="160" stroke="#667eea" stroke-width="3"/>
+                <line x1="40" y1="160" x2="40" y2="40" stroke="#667eea" stroke-width="3"/>
+                <polyline points="50,140 70,120 90,110 110,80 130,60 150,40" stroke="#667eea" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <circle cx="50" cy="140" r="5" fill="#667eea"/>
+                <circle cx="70" cy="120" r="5" fill="#667eea"/>
+                <circle cx="90" cy="110" r="5" fill="#667eea"/>
+                <circle cx="110" cy="80" r="5" fill="#667eea"/>
+                <circle cx="130" cy="60" r="5" fill="#667eea"/>
+                <circle cx="150" cy="40" r="5" fill="#667eea"/>
+            </svg>
+        `,
+        target: `
+            <svg class="illustration-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="80" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                <circle cx="100" cy="100" r="60" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                <circle cx="100" cy="100" r="40" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                <circle cx="100" cy="100" r="20" fill="#ff6b6b"/>
+                <line x1="100" y1="20" x2="100" y2="180" stroke="#ff6b6b" stroke-width="2"/>
+                <line x1="20" y1="100" x2="180" y2="100" stroke="#ff6b6b" stroke-width="2"/>
+            </svg>
+        `,
+        idea: `
+            <svg class="illustration-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="80" r="40" fill="#feca57" opacity="0.3"/>
+                <path d="M 100 40 Q 80 50 80 80 Q 80 110 100 120 Q 120 110 120 80 Q 120 50 100 40" fill="#feca57"/>
+                <rect x="90" y="120" width="20" height="10" fill="#f59e0b" rx="2"/>
+                <rect x="85" y="130" width="30" height="5" fill="#f59e0b" rx="2"/>
+                <line x1="60" y1="60" x2="50" y2="50" stroke="#feca57" stroke-width="3" stroke-linecap="round"/>
+                <line x1="140" y1="60" x2="150" y2="50" stroke="#feca57" stroke-width="3" stroke-linecap="round"/>
+                <line x1="60" y1="100" x2="40" y2="100" stroke="#feca57" stroke-width="3" stroke-linecap="round"/>
+                <line x1="140" y1="100" x2="160" y2="100" stroke="#feca57" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+        `,
+        team: `
+            <svg class="illustration-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="70" cy="70" r="20" fill="#667eea"/>
+                <ellipse cx="70" cy="110" rx="30" ry="20" fill="#667eea" opacity="0.7"/>
+                <circle cx="130" cy="70" r="20" fill="#764ba2"/>
+                <ellipse cx="130" cy="110" rx="30" ry="20" fill="#764ba2" opacity="0.7"/>
+                <circle cx="100" cy="90" r="20" fill="#8b5cf6"/>
+                <ellipse cx="100" cy="130" rx="30" ry="20" fill="#8b5cf6" opacity="0.7"/>
+            </svg>
+        `,
+        rocket: `
+            <svg class="illustration-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="100" cy="40" rx="25" ry="35" fill="#667eea"/>
+                <rect x="75" y="40" width="50" height="60" fill="#764ba2" rx="5"/>
+                <path d="M 75 100 L 60 140 L 75 130 Z" fill="#ff6b6b"/>
+                <path d="M 125 100 L 140 140 L 125 130 Z" fill="#ff6b6b"/>
+                <circle cx="100" cy="60" r="8" fill="#feca57"/>
+                <circle cx="100" cy="80" r="8" fill="#feca57"/>
+                <path d="M 70 150 Q 60 170 50 180" stroke="#95a5a6" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M 100 155 Q 100 175 100 185" stroke="#95a5a6" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M 130 150 Q 140 170 150 180" stroke="#95a5a6" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+        `
+    };
+
+    return svgs[type] || svgs.success;
+}
+
+// イラストを削除
+function removeIllustration(illustrationId) {
+    const illustrationContainer = document.querySelector('[data-illustration-id="' + illustrationId + '"]');
+    if (illustrationContainer) {
+        illustrationContainer.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(function() {
+            illustrationContainer.remove();
+            console.log('イラストを削除しました:', illustrationId);
+        }, 300);
+    }
+}
+
+// グローバルスコープに関数を追加
+window.removeIllustration = removeIllustration;
