@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スタイリッシュ企画書メーカー</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="app-title">✨ 企画書メーカー</h1>
+            <p class="app-subtitle">訴求力の高い企画書を数分で作成</p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-container">
+        <!-- 左側：入力エリア -->
+        <section class="editor-panel">
+            <div class="panel-header">
+                <h2>📝 企画書の内容を入力</h2>
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-title">企画タイトル</label>
+                <input
+                    type="text"
+                    id="proposal-title"
+                    placeholder="例：新商品販売促進キャンペーン"
+                    maxlength="50"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-subtitle">サブタイトル</label>
+                <input
+                    type="text"
+                    id="proposal-subtitle"
+                    placeholder="例：若年層をターゲットにしたSNS戦略"
+                    maxlength="80"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-objective">企画の目的</label>
+                <textarea
+                    id="proposal-objective"
+                    rows="4"
+                    placeholder="この企画で達成したい目標を記入してください"
+                ></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-target">ターゲット</label>
+                <input
+                    type="text"
+                    id="proposal-target"
+                    placeholder="例：20-30代の女性、SNS利用者"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-content">企画内容</label>
+                <textarea
+                    id="proposal-content"
+                    rows="6"
+                    placeholder="企画の具体的な内容を記入してください"
+                ></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-benefits">期待される効果</label>
+                <textarea
+                    id="proposal-benefits"
+                    rows="4"
+                    placeholder="この企画によって得られる効果やメリットを記入してください"
+                ></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="proposal-budget">予算</label>
+                <input
+                    type="text"
+                    id="proposal-budget"
+                    placeholder="例：100万円"
+                >
+            </div>
+
+            <!-- テンプレート選択 -->
+            <div class="template-selector">
+                <h3>🎨 デザインテンプレート</h3>
+                <div class="template-buttons">
+                    <button class="template-btn active" data-template="modern">
+                        モダン
+                    </button>
+                    <button class="template-btn" data-template="professional">
+                        プロフェッショナル
+                    </button>
+                    <button class="template-btn" data-template="creative">
+                        クリエイティブ
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右側：プレビューエリア -->
+        <section class="preview-panel">
+            <div class="panel-header">
+                <h2>👁️ リアルタイムプレビュー</h2>
+            </div>
+
+            <div class="preview-container">
+                <div id="proposal-preview" class="proposal-document modern">
+                    <div class="doc-header">
+                        <h1 class="doc-title">企画タイトルを入力してください</h1>
+                        <p class="doc-subtitle">サブタイトルを入力してください</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title">📍 企画の目的</h2>
+                        <p class="section-content">企画の目的を入力してください</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title">🎯 ターゲット</h2>
+                        <p class="section-content">ターゲットを入力してください</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title">💡 企画内容</h2>
+                        <p class="section-content">企画内容を入力してください</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title">✨ 期待される効果</h2>
+                        <p class="section-content">期待される効果を入力してください</p>
+                    </div>
+
+                    <div class="doc-section">
+                        <h2 class="section-title">💰 予算</h2>
+                        <p class="section-content">予算を入力してください</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
