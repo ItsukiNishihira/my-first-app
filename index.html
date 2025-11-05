@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>スタイリッシュ企画書メーカー</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- PDF出力用ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <!-- ヘッダー -->
@@ -21,6 +24,21 @@
         <section class="editor-panel">
             <div class="panel-header">
                 <h2>📝 企画書の内容を入力</h2>
+            </div>
+
+            <!-- 画像アップロード（Phase 2新機能） -->
+            <div class="input-group">
+                <label for="proposal-image">📸 ロゴ・画像をアップロード</label>
+                <input
+                    type="file"
+                    id="proposal-image"
+                    accept="image/*"
+                    class="file-input"
+                >
+                <div class="image-preview-container" id="image-preview-container" style="display: none;">
+                    <img id="image-preview" src="" alt="プレビュー画像">
+                    <button type="button" class="remove-image-btn" id="remove-image-btn">✕ 画像を削除</button>
+                </div>
             </div>
 
             <div class="input-group">
@@ -103,6 +121,42 @@
                     </button>
                 </div>
             </div>
+
+            <!-- カラーカスタマイズ（Phase 2新機能） -->
+            <div class="color-customizer">
+                <h3>🎨 カラーカスタマイズ</h3>
+                <div class="color-picker-group">
+                    <div class="color-picker-item">
+                        <label for="primary-color">メインカラー</label>
+                        <input type="color" id="primary-color" value="#667eea">
+                    </div>
+                    <div class="color-picker-item">
+                        <label for="secondary-color">アクセントカラー</label>
+                        <input type="color" id="secondary-color" value="#764ba2">
+                    </div>
+                </div>
+                <button class="reset-color-btn" id="reset-color-btn">デフォルトに戻す</button>
+            </div>
+
+            <!-- アクションボタン（Phase 2新機能） -->
+            <div class="action-buttons">
+                <h3>💾 保存・出力</h3>
+                <div class="button-grid">
+                    <button class="action-btn save-btn" id="save-btn">
+                        💾 保存する
+                    </button>
+                    <button class="action-btn load-btn" id="load-btn">
+                        📂 読み込む
+                    </button>
+                    <button class="action-btn pdf-btn" id="pdf-btn">
+                        📄 PDFで出力
+                    </button>
+                    <button class="action-btn clear-btn" id="clear-btn">
+                        🗑️ クリア
+                    </button>
+                </div>
+                <div class="save-status" id="save-status"></div>
+            </div>
         </section>
 
         <!-- 右側：プレビューエリア -->
@@ -114,6 +168,9 @@
             <div class="preview-container">
                 <div id="proposal-preview" class="proposal-document modern">
                     <div class="doc-header">
+                        <div class="doc-image-container" id="doc-image-container" style="display: none;">
+                            <img id="doc-image" src="" alt="企画書画像">
+                        </div>
                         <h1 class="doc-title">企画タイトルを入力してください</h1>
                         <p class="doc-subtitle">サブタイトルを入力してください</p>
                     </div>

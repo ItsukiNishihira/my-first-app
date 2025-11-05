@@ -19,6 +19,21 @@ function initializeApp() {
 
     // テンプレート切り替え機能をセットアップ
     setupTemplateSwitch();
+
+    // Phase 2: 画像アップロード機能をセットアップ
+    setupImageUpload();
+
+    // Phase 2: カラーカスタマイズ機能をセットアップ
+    setupColorCustomizer();
+
+    // Phase 2: アクションボタン（保存・読み込み・PDF出力・クリア）をセットアップ
+    setupActionButtons();
+
+    // Phase 2: 自動保存機能をセットアップ
+    setupAutoSave();
+
+    // Phase 2: 保存されたデータを読み込む
+    loadSavedData();
 }
 
 // ========================================
@@ -191,6 +206,18 @@ document.head.appendChild(style);
 
 // 現在の企画書データを取得する関数
 function getProposalData() {
+    // 画像データも取得
+    const docImage = document.getElementById('doc-image');
+    const imageData = docImage.src && docImage.src !== '' ? docImage.src : null;
+
+    // アクティブなテンプレートを取得
+    const activeTemplate = document.querySelector('.template-btn.active');
+    const template = activeTemplate ? activeTemplate.getAttribute('data-template') : 'modern';
+
+    // カスタムカラーを取得
+    const primaryColor = document.getElementById('primary-color').value;
+    const secondaryColor = document.getElementById('secondary-color').value;
+
     return {
         title: document.getElementById('proposal-title').value,
         subtitle: document.getElementById('proposal-subtitle').value,
@@ -198,7 +225,11 @@ function getProposalData() {
         target: document.getElementById('proposal-target').value,
         content: document.getElementById('proposal-content').value,
         benefits: document.getElementById('proposal-benefits').value,
-        budget: document.getElementById('proposal-budget').value
+        budget: document.getElementById('proposal-budget').value,
+        image: imageData,
+        template: template,
+        primaryColor: primaryColor,
+        secondaryColor: secondaryColor
     };
 }
 
@@ -209,3 +240,412 @@ function showData() {
 }
 
 console.log('💡 ヒント: コンソールで showData() と入力すると、現在の入力内容が確認できます');
+
+// ========================================
+// Phase 2: 画像アップロード機能
+// ========================================
+function setupImageUpload() {
+    const imageInput = document.getElementById('proposal-image');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+    const docImageContainer = document.getElementById('doc-image-container');
+    const docImage = document.getElementById('doc-image');
+
+    // 画像が選択された時の処理
+    imageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+
+        if (file && file.type.startsWith('image/')) {
+            // FileReaderを使って画像を読み込む
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+
+                // プレビューエリアに画像を表示
+                imagePreview.src = imageData;
+                imagePreviewContainer.style.display = 'block';
+
+                // ドキュメントプレビューに画像を表示
+                docImage.src = imageData;
+                docImageContainer.style.display = 'block';
+
+                console.log('画像をアップロードしました');
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 画像削除ボタンの処理
+    removeImageBtn.addEventListener('click', function() {
+        // 画像をクリア
+        imageInput.value = '';
+        imagePreview.src = '';
+        imagePreviewContainer.style.display = 'none';
+        docImage.src = '';
+        docImageContainer.style.display = 'none';
+
+        console.log('画像を削除しました');
+    });
+
+    console.log('画像アップロード機能を有効化しました');
+}
+
+// ========================================
+// Phase 2: カラーカスタマイズ機能
+// ========================================
+function setupColorCustomizer() {
+    const primaryColorPicker = document.getElementById('primary-color');
+    const secondaryColorPicker = document.getElementById('secondary-color');
+    const resetColorBtn = document.getElementById('reset-color-btn');
+    const proposalPreview = document.getElementById('proposal-preview');
+
+    // カスタムカラーを適用する関数
+    function applyCustomColors(primary, secondary) {
+        const gradient = `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`;
+
+        // ヘッダーの背景グラデーションを変更
+        const docHeader = proposalPreview.querySelector('.doc-header');
+        docHeader.style.background = gradient.replace('135deg', '135deg') + ', rgba(255, 255, 255, 0.05)';
+        docHeader.style.borderBottomColor = primary;
+
+        // タイトルのグラデーションを変更
+        const docTitle = proposalPreview.querySelector('.doc-title');
+        docTitle.style.background = gradient;
+        docTitle.style.webkitBackgroundClip = 'text';
+        docTitle.style.webkitTextFillColor = 'transparent';
+        docTitle.style.backgroundClip = 'text';
+
+        // セクションタイトルの色を変更
+        const sectionTitles = proposalPreview.querySelectorAll('.section-title');
+        sectionTitles.forEach(function(title) {
+            title.style.color = primary;
+        });
+
+        // セクションの左ボーダーを変更
+        const sections = proposalPreview.querySelectorAll('.doc-section');
+        sections.forEach(function(section) {
+            section.style.borderLeftColor = primary;
+        });
+    }
+
+    // メインカラー変更時
+    primaryColorPicker.addEventListener('input', function() {
+        const primary = this.value;
+        const secondary = secondaryColorPicker.value;
+        applyCustomColors(primary, secondary);
+    });
+
+    // アクセントカラー変更時
+    secondaryColorPicker.addEventListener('input', function() {
+        const primary = primaryColorPicker.value;
+        const secondary = this.value;
+        applyCustomColors(primary, secondary);
+    });
+
+    // デフォルトに戻すボタン
+    resetColorBtn.addEventListener('click', function() {
+        // 現在のテンプレートを取得
+        const activeTemplate = document.querySelector('.template-btn.active');
+        const templateName = activeTemplate ? activeTemplate.getAttribute('data-template') : 'modern';
+
+        // テンプレートごとのデフォルトカラー
+        const defaultColors = {
+            modern: { primary: '#667eea', secondary: '#764ba2' },
+            professional: { primary: '#2c3e50', secondary: '#34495e' },
+            creative: { primary: '#ff6b6b', secondary: '#feca57' }
+        };
+
+        const colors = defaultColors[templateName] || defaultColors.modern;
+        primaryColorPicker.value = colors.primary;
+        secondaryColorPicker.value = colors.secondary;
+
+        // カスタムスタイルをリセット
+        const docHeader = proposalPreview.querySelector('.doc-header');
+        const docTitle = proposalPreview.querySelector('.doc-title');
+        const sectionTitles = proposalPreview.querySelectorAll('.section-title');
+        const sections = proposalPreview.querySelectorAll('.doc-section');
+
+        docHeader.style.background = '';
+        docHeader.style.borderBottomColor = '';
+        docTitle.style.background = '';
+        docTitle.style.webkitBackgroundClip = '';
+        docTitle.style.webkitTextFillColor = '';
+        docTitle.style.backgroundClip = '';
+
+        sectionTitles.forEach(function(title) {
+            title.style.color = '';
+        });
+
+        sections.forEach(function(section) {
+            section.style.borderLeftColor = '';
+        });
+
+        console.log('カラーをデフォルトに戻しました');
+    });
+
+    console.log('カラーカスタマイズ機能を有効化しました');
+}
+
+// ========================================
+// Phase 2: アクションボタン機能
+// ========================================
+function setupActionButtons() {
+    const saveBtn = document.getElementById('save-btn');
+    const loadBtn = document.getElementById('load-btn');
+    const pdfBtn = document.getElementById('pdf-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const saveStatus = document.getElementById('save-status');
+
+    // 保存ボタン
+    saveBtn.addEventListener('click', function() {
+        saveProposalData();
+        showSaveStatus('保存しました！', 'success');
+    });
+
+    // 読み込みボタン
+    loadBtn.addEventListener('click', function() {
+        loadSavedData();
+        showSaveStatus('読み込みました！', 'success');
+    });
+
+    // PDF出力ボタン
+    pdfBtn.addEventListener('click', function() {
+        exportToPDF();
+    });
+
+    // クリアボタン
+    clearBtn.addEventListener('click', function() {
+        if (confirm('すべての入力内容をクリアしますか？')) {
+            clearAllData();
+            showSaveStatus('クリアしました', 'success');
+        }
+    });
+
+    // 保存ステータスを表示する関数
+    function showSaveStatus(message, type) {
+        saveStatus.textContent = message;
+        saveStatus.className = 'save-status ' + type;
+
+        // 3秒後に消す
+        setTimeout(function() {
+            saveStatus.textContent = '';
+            saveStatus.className = 'save-status';
+        }, 3000);
+    }
+
+    console.log('アクションボタン機能を有効化しました');
+}
+
+// ========================================
+// Phase 2: ローカルストレージ保存機能
+// ========================================
+
+// データを保存
+function saveProposalData() {
+    const data = getProposalData();
+    localStorage.setItem('proposalData', JSON.stringify(data));
+    console.log('データを保存しました', data);
+}
+
+// データを読み込み
+function loadSavedData() {
+    const savedData = localStorage.getItem('proposalData');
+
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        console.log('保存されたデータを読み込みました', data);
+
+        // テキストフィールドに値をセット
+        document.getElementById('proposal-title').value = data.title || '';
+        document.getElementById('proposal-subtitle').value = data.subtitle || '';
+        document.getElementById('proposal-objective').value = data.objective || '';
+        document.getElementById('proposal-target').value = data.target || '';
+        document.getElementById('proposal-content').value = data.content || '';
+        document.getElementById('proposal-benefits').value = data.benefits || '';
+        document.getElementById('proposal-budget').value = data.budget || '';
+
+        // プレビューを更新（各入力イベントをトリガー）
+        document.getElementById('proposal-title').dispatchEvent(new Event('input'));
+        document.getElementById('proposal-subtitle').dispatchEvent(new Event('input'));
+        document.getElementById('proposal-objective').dispatchEvent(new Event('input'));
+        document.getElementById('proposal-target').dispatchEvent(new Event('input'));
+        document.getElementById('proposal-content').dispatchEvent(new Event('input'));
+        document.getElementById('proposal-benefits').dispatchEvent(new Event('input'));
+        document.getElementById('proposal-budget').dispatchEvent(new Event('input'));
+
+        // 画像を復元
+        if (data.image) {
+            const docImage = document.getElementById('doc-image');
+            const docImageContainer = document.getElementById('doc-image-container');
+            const imagePreview = document.getElementById('image-preview');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+
+            docImage.src = data.image;
+            docImageContainer.style.display = 'block';
+            imagePreview.src = data.image;
+            imagePreviewContainer.style.display = 'block';
+        }
+
+        // テンプレートを復元
+        if (data.template) {
+            const templateButtons = document.querySelectorAll('.template-btn');
+            templateButtons.forEach(function(btn) {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-template') === data.template) {
+                    btn.click();
+                }
+            });
+        }
+
+        // カスタムカラーを復元
+        if (data.primaryColor && data.secondaryColor) {
+            document.getElementById('primary-color').value = data.primaryColor;
+            document.getElementById('secondary-color').value = data.secondaryColor;
+
+            // カラーを適用
+            const event = new Event('input');
+            document.getElementById('primary-color').dispatchEvent(event);
+        }
+    } else {
+        console.log('保存されたデータはありません');
+    }
+}
+
+// すべてのデータをクリア
+function clearAllData() {
+    // フォームをクリア
+    document.getElementById('proposal-title').value = '';
+    document.getElementById('proposal-subtitle').value = '';
+    document.getElementById('proposal-objective').value = '';
+    document.getElementById('proposal-target').value = '';
+    document.getElementById('proposal-content').value = '';
+    document.getElementById('proposal-benefits').value = '';
+    document.getElementById('proposal-budget').value = '';
+
+    // 画像をクリア
+    document.getElementById('proposal-image').value = '';
+    document.getElementById('image-preview').src = '';
+    document.getElementById('image-preview-container').style.display = 'none';
+    document.getElementById('doc-image').src = '';
+    document.getElementById('doc-image-container').style.display = 'none';
+
+    // プレビューをリセット
+    document.querySelector('.doc-title').textContent = 'タイトルを入力してください';
+    document.querySelector('.doc-subtitle').textContent = 'サブタイトルを入力してください';
+    const sections = document.querySelectorAll('.section-content');
+    sections[0].textContent = '企画の目的を入力してください';
+    sections[1].textContent = 'ターゲットを入力してください';
+    sections[2].textContent = '企画内容を入力してください';
+    sections[3].textContent = '期待される効果を入力してください';
+    sections[4].textContent = '予算を入力してください';
+
+    // ローカルストレージもクリア
+    localStorage.removeItem('proposalData');
+
+    console.log('すべてのデータをクリアしました');
+}
+
+// ========================================
+// Phase 2: 自動保存機能
+// ========================================
+function setupAutoSave() {
+    // すべての入力フィールドを取得
+    const inputs = document.querySelectorAll('input, textarea');
+
+    // 5秒ごとに自動保存
+    setInterval(function() {
+        // 何か入力されていれば自動保存
+        const data = getProposalData();
+        if (data.title || data.subtitle || data.objective) {
+            saveProposalData();
+            console.log('自動保存しました');
+        }
+    }, 5000); // 5秒ごと
+
+    console.log('自動保存機能を有効化しました（5秒ごと）');
+}
+
+// ========================================
+// Phase 2: PDF出力機能
+// ========================================
+function exportToPDF() {
+    console.log('PDF出力を開始します...');
+
+    const previewElement = document.getElementById('proposal-preview');
+    const pdfBtn = document.getElementById('pdf-btn');
+
+    // ボタンを無効化
+    pdfBtn.disabled = true;
+    pdfBtn.textContent = '📄 PDF生成中...';
+
+    // html2canvasを使ってHTMLを画像に変換
+    html2canvas(previewElement, {
+        scale: 2, // 高解像度
+        useCORS: true, // 画像の読み込みを許可
+        backgroundColor: '#ffffff'
+    }).then(function(canvas) {
+        // jsPDFを使ってPDFを生成
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const imgWidth = 210; // A4の幅（mm）
+        const pageHeight = 297; // A4の高さ（mm）
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // 最初のページを追加
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // 複数ページが必要な場合
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        // PDFをダウンロード
+        const title = document.getElementById('proposal-title').value || '企画書';
+        pdf.save(title + '.pdf');
+
+        // ボタンを元に戻す
+        pdfBtn.disabled = false;
+        pdfBtn.textContent = '📄 PDFで出力';
+
+        console.log('PDFを出力しました');
+
+        // 成功メッセージを表示
+        const saveStatus = document.getElementById('save-status');
+        saveStatus.textContent = 'PDFをダウンロードしました！';
+        saveStatus.className = 'save-status success';
+        setTimeout(function() {
+            saveStatus.textContent = '';
+            saveStatus.className = 'save-status';
+        }, 3000);
+    }).catch(function(error) {
+        console.error('PDF生成エラー:', error);
+
+        // エラーメッセージを表示
+        const saveStatus = document.getElementById('save-status');
+        saveStatus.textContent = 'PDF生成に失敗しました';
+        saveStatus.className = 'save-status error';
+
+        // ボタンを元に戻す
+        pdfBtn.disabled = false;
+        pdfBtn.textContent = '📄 PDFで出力';
+
+        setTimeout(function() {
+            saveStatus.textContent = '';
+            saveStatus.className = 'save-status';
+        }, 3000);
+    });
+}
